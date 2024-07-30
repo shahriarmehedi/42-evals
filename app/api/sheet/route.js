@@ -1,16 +1,46 @@
-import prisma from '@lib/prisma';
+import prisma from '@/app/libs/prismadb';
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic'
 
-export async function get(req) {
-    const { sheet } = req.query
-    const sheetData = await prisma.sheet.findUnique({
-        where: {
-            sheet
-        }
+
+
+// GET /api/sheet
+export const GET = async (req) => {
+    const sheetData = await prisma.sheet.findMany();
+    return NextResponse.json({
+        success: true,
+        data: sheetData,
+        message: 'Sheets found successfully'
     })
-    if (!sheetData) {
-        return NextResponse.error('Sheet not found', 404)
-    }
-    return NextResponse.json(sheetData)
 }
+
+// POST /api/sheet
+
+export const POST = async (req) => {
+    const body = await req.json();
+    const {
+        project_title,
+        number_of_student,
+        introduction,
+        guidelines,
+        attachments,
+        optional_bonus_sections
+    } = body;
+
+    const sheetData = await prisma.sheet.create({
+        data: {
+            project_title,
+            number_of_student,
+            introduction,
+            guidelines,
+            attachments,
+            optional_bonus_sections
+        }
+    });
+    return NextResponse.json({
+        success: true,
+        data: sheetData,
+        message: 'Sheet created successfully'
+    })
+}
+
