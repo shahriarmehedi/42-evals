@@ -27,12 +27,27 @@ export const GET = async (req, { params }) => {
 export const PUT = async (req, { params }) => {
     const { id } = params;
     const body = await req.json();
+    const {
+        project_title,
+        number_of_student,
+        introduction,
+        guidelines,
+        attachments,
+        optional_bonus_sections
+    } = body;
 
     const sheetData = await prisma.sheet.update({
         where: {
             id
         },
-        data: body
+        data: {
+            project_title,
+            number_of_student,
+            introduction,
+            guidelines,
+            attachments,
+            optional_bonus_sections
+        }
     });
     return NextResponse.json({
         success: true,
@@ -44,17 +59,28 @@ export const PUT = async (req, { params }) => {
 // DELETE /api/sheet/[id]
 
 export const DELETE = async (req, { params }) => {
-    const { id } = params;
-    const sheetData = await prisma.sheet.delete({
-        where: {
-            id
-        }
-    });
-    return NextResponse.json({
-        success: true,
-        data: sheetData,
-        message: 'Sheet deleted successfully'
-    })
+
+    try {
+        const { id } = params;
+        const sheetData = await prisma.sheet.delete({
+            where: {
+                id
+            }
+        });
+        return NextResponse.json({
+            success: true,
+            data: sheetData,
+            message: 'Sheet deleted successfully'
+        })
+    } catch (error) {
+        return NextResponse.json({
+            success: false,
+            message: 'Something went wrong',
+            error: error
+        })
+    }
+
+
 }
 
 

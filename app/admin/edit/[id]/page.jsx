@@ -5,7 +5,65 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 
-function page() {
+function page({ params }) {
+
+
+    // Get the sheet id from the url
+
+    const sheetId = params.id
+
+    // Get the sheet data from the server
+
+
+    const [sheetDataFromServer, setSheetDataFromServer] = useState({})
+    const [loadingSheetData, setLoadingSheetData] = useState(true)
+
+    useEffect(() => {
+        fetch(`/api/sheet/${sheetId}`)
+            .then(res => res.json())
+            .then(data => {
+                setSheetDataFromServer(data.data)
+                setLoadingSheetData(false)
+            }
+            )
+    }, [])
+
+    // Get the mandatory options data from the server
+
+    const [mandatoryOptionsDataFromServer, setMandatoryOptionsDataFromServer] = useState([])
+    const [loadingMandatoryOptionsData, setLoadingMandatoryOptionsData] = useState(true)
+
+    useEffect(() => {
+        fetch(`/api/mandatorySection/${sheetId}`)
+            .then(res => res.json())
+            .then(data => {
+                setMandatoryOptionsDataFromServer(data.data)
+                setLoadingMandatoryOptionsData(false)
+            }
+            )
+    }, [])
+
+    // Get the grading options data from the server
+
+    const [gradingOptionsDataFromServer, setGradingOptionsDataFromServer] = useState([])
+    const [loadingGradingOptionsData, setLoadingGradingOptionsData] = useState(true)
+
+    useEffect(() => {
+        fetch(`/api/gradingOption/${sheetId}`)
+            .then(res => res.json())
+            .then(data => {
+                setGradingOptionsDataFromServer(data.data)
+                setLoadingGradingOptionsData(false)
+            }
+            )
+    }, [])
+
+
+
+    console.log(sheetDataFromServer);
+    console.log(mandatoryOptionsDataFromServer);
+    console.log(gradingOptionsDataFromServer);
+
 
 
     const {
@@ -13,8 +71,7 @@ function page() {
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm();
-
+    } = useForm()
 
 
 
@@ -82,9 +139,6 @@ function page() {
         const yes_no = e.target.value
         setMandatoryOptionsData({ ...mandatoryOptionsData, yes_no })
     }
-
-
-
 
 
 
@@ -159,12 +213,12 @@ function page() {
 
     // -------------------- Submit form --------------------
 
-    const createSheet = async (newData, newMandatoryOptionsData, newGradingOptionsData) => {
+    const updateSheet = async (newData, newMandatoryOptionsData, newGradingOptionsData) => {
 
         // sweet alert loading until all process is done
 
         Swal.fire({
-            title: 'Creating Sheet',
+            title: 'Updating Sheet',
             html: 'Please wait...',
             timerProgressBar: true,
             didOpen: () => {
@@ -174,20 +228,18 @@ function page() {
 
         // send Post request to create a sheet
 
-        fetch('/api/sheet', {
-            method: 'POST',
+        fetch(`/api/sheet/${sheetId}`, {
+            method: 'PUT',
             body: JSON.stringify(newData)
         })
             .then(res => res.json())
             .then(data => {
                 console.log(data.data)
 
-                const sheetId = data.data.id
-
                 // Now create a mandatory options using the sheet id
 
                 fetch(`/api/mandatorySection/${sheetId}`, {
-                    method: 'POST',
+                    method: 'PUT',
                     body: JSON.stringify(newMandatoryOptionsData)
                 })
                     .then(res => res.json())
@@ -197,7 +249,7 @@ function page() {
                         // Now create a grading options using the sheet id
 
                         fetch(`/api/gradingOption/${sheetId}`, {
-                            method: 'POST',
+                            method: 'PUT',
                             body: JSON.stringify(newGradingOptionsData)
                         })
                             .then(res => res.json())
@@ -207,14 +259,14 @@ function page() {
                                 if (data.success) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Sheet created successfully',
+                                        title: 'Sheet updated successfully',
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Failed to create sheet',
+                                        title: 'Failed to update sheet',
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
@@ -246,8 +298,8 @@ function page() {
         }
 
         const newMandatoryOptionsData = {
-            title: mandatoryOptionsData.title,
-            description: mandatoryOptionsData.description,
+            title: mandatoryOptionsData.title || mandatoryOptionsDataFromServer[0].title,
+            description: mandatoryOptionsData.description || mandatoryOptionsDataFromServer[0].description,
             yes_no: mandatoryOptionsData.yes_no === 'true' ? true : false
         }
 
@@ -266,8 +318,41 @@ function page() {
             cannot_support: gradingOptionsData.cannot_support === 'true' ? true : false
         }
 
-        createSheet(newData, newMandatoryOptionsData, newGradingOptionsData)
+
+        console.log('SHEET DATA', newData)
+        console.log('MANDATORY OPTIONS DATA', newMandatoryOptionsData)
+        console.log('GRADING OPTIONS DATA', newGradingOptionsData)
+        updateSheet(newData, newMandatoryOptionsData, newGradingOptionsData)
     }
+
+
+
+    if (loadingSheetData || loadingMandatoryOptionsData || loadingGradingOptionsData) {
+        return (
+            <div className='bg-white text-gray-900 min-h-screen'>
+                <div className="max-w-7xl mx-auto pb-20 px-5 md:px-14 lg:px-20 2xl:px-32">
+
+                    {/* Back to admin */}
+                    <div className="flex gap-3 items-center">
+                        <Link href='/admin'>
+                            <button
+                                className='w-10 h-10 bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-3 rounded-full mt-10 transition duration-200'>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                                </svg>
+                            </button>
+                        </Link>
+                        <h1 className=' mt-10  text-gray-400'>Back to dashboard</h1>
+                    </div>
+
+                    <div className='mt-10 flex justify-center items-center min-h-[65vh]'>
+                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
 
 
 
@@ -276,18 +361,33 @@ function page() {
             <div className="max-w-7xl mx-auto pb-20 px-5 md:px-14 lg:px-20 2xl:px-32">
 
                 {/* Back to admin */}
-                <Link href='/admin'>
-                    <button
-                        className='w-12 h-12 bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-4 rounded-full mt-10 transition duration-200'>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                <div className="flex gap-3 items-center">
+                    <Link href='/admin'>
+                        <button
+                            className='w-10 h-10 bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-3 rounded-full mt-10 transition duration-200'>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                            </svg>
+                        </button>
+                    </Link>
+                    <h1 className=' mt-10  text-gray-400'>Back to dashboard</h1>
+                </div>
+
+
+
+                <div className="flex mt-10 items-center gap-2">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                         </svg>
-                    </button>
-                </Link>
 
 
+                    </span>
+                    <h1 className='text-3xl '>
 
-                <h1 className='text-3xl mt-10'>+ Add a new sheet</h1>
+                        Edit Sheet
+                    </h1>
+                </div>
 
                 <div>
                     <form onSubmit={handleSubmit(submitForm)} className='mt-10'>
@@ -298,6 +398,7 @@ function page() {
                                     Project Title
                                 </label>
                                 <input
+                                    defaultValue={sheetDataFromServer?.project_title}
                                     placeholder='Enter project title'
                                     type='text'
                                     id='project_title'
@@ -312,6 +413,7 @@ function page() {
                                     Number of Student
                                 </label>
                                 <input
+                                    defaultValue={sheetDataFromServer?.number_of_student}
                                     placeholder='Enter number of student'
                                     type='number'
                                     id='number_of_student'
@@ -326,6 +428,9 @@ function page() {
                                     Introduction
                                 </label>
                                 <textarea
+                                    defaultValue={
+                                        sheetDataFromServer?.introduction ? sheetDataFromServer?.introduction.join('\n') : ''
+                                    }
                                     rows={5}
                                     placeholder='Enter introduction text separated by a new line'
                                     id='introduction'
@@ -342,6 +447,9 @@ function page() {
                                     Guidelines
                                 </label>
                                 <textarea
+                                    defaultValue={
+                                        sheetDataFromServer?.guidelines ? sheetDataFromServer?.guidelines.join('\n') : ''
+                                    }
                                     rows={5}
                                     placeholder='Enter guidelines text separated by a new line'
                                     onChange={(e) => handleGuidelines(e)}
@@ -365,6 +473,9 @@ function page() {
                                                 Attachment 1 Title:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[0].split(',')[0] : ''
+                                                }
                                                 {...register('attachment1Title', { required: true })}
                                                 placeholder='Enter attachment title'
                                                 type='text'
@@ -378,6 +489,9 @@ function page() {
                                                 Attachment 1 URL:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[0].split(',')[1] : ''
+                                                }
                                                 {...register('attachment1Url', { required: true })}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
@@ -395,6 +509,9 @@ function page() {
                                                 Attachment 2 Title:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[1].split(',')[0] : ''
+                                                }
                                                 {...register('attachment2Title', { required: true })}
                                                 placeholder='Enter attachment title'
                                                 type='text'
@@ -408,6 +525,9 @@ function page() {
                                                 Attachment 2 URL:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[1].split(',')[1] : ''
+                                                }
                                                 {...register('attachment2Url', { required: true })}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
@@ -425,6 +545,9 @@ function page() {
                                                 Attachment 3 Title:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[2].split(',')[0] : ''
+                                                }
                                                 {...register('attachment3Title', { required: true })}
                                                 placeholder='Enter attachment title'
                                                 type='text'
@@ -438,6 +561,9 @@ function page() {
                                                 Attachment 3 URL:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[2].split(',')[1] : ''
+                                                }
                                                 {...register('attachment3Url', { required: true })}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
@@ -455,6 +581,9 @@ function page() {
                                                 Attachment 4 Title:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[3].split(',')[0] : ''
+                                                }
                                                 {...register('attachment4Title', { required: true })}
                                                 placeholder='Enter attachment title'
                                                 type='text'
@@ -468,6 +597,9 @@ function page() {
                                                 Attachment 4 URL:
                                             </label>
                                             <input
+                                                defaultValue={
+                                                    sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[3].split(',')[1] : ''
+                                                }
                                                 {...register('attachment4Url', { required: true })}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
@@ -484,6 +616,7 @@ function page() {
                                             Optional Bonus Sections
                                         </label>
                                         <textarea
+                                            defaultValue={sheetDataFromServer?.optional_bonus_sections}
                                             rows={5}
                                             placeholder='Enter optional bonus section text'
                                             {...register('optional_bonus_sections', { required: true })}
@@ -509,6 +642,9 @@ function page() {
                                             Title of the evaluation criteria:
                                         </label>
                                         <input
+                                            defaultValue={
+                                                mandatoryOptionsDataFromServer ? mandatoryOptionsDataFromServer[0].title : ''
+                                            }
                                             onChange={(e) => handleTitle(e)}
                                             placeholder='Enter a title'
                                             type='text'
@@ -523,6 +659,9 @@ function page() {
                                         </label>
 
                                         <textarea
+                                            defaultValue={
+                                                mandatoryOptionsDataFromServer ? mandatoryOptionsDataFromServer[0].description.join('\n') : ''
+                                            }
                                             onChange={(e) => handleDescription(e)}
                                             rows={5}
                                             placeholder='Enter detailed description separated by a new line'
@@ -539,6 +678,9 @@ function page() {
                                         </label>
 
                                         <select
+                                            defaultValue={
+                                                mandatoryOptionsDataFromServer ? mandatoryOptionsDataFromServer[0].yes_no : null
+                                            }
                                             onChange={(e) => handleYesNo(e)}
                                             id='yes_no'
                                             required
@@ -562,9 +704,11 @@ function page() {
                                                     OK:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].ok : null
+                                                    }
                                                     onChange={(e) => handleOk(e)}
                                                     id='ok'
-
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
                                                 >
                                                     <option value={null}>Select one</option>
@@ -578,6 +722,9 @@ function page() {
                                                     Outstanding:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].outstanding : null
+                                                    }
                                                     onChange={(e) => handleOutstanding(e)}
                                                     id='outstanding'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -593,6 +740,9 @@ function page() {
                                                     Empty Work:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].empty_work : null
+                                                    }
                                                     onChange={(e) => handleEmptyWork(e)}
                                                     id='empty_work'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -608,6 +758,9 @@ function page() {
                                                     Incomplete Work:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].incomplete_work : null
+                                                    }
                                                     onChange={(e) => handleIncompleteWork(e)}
                                                     id='incomplete_work'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -623,6 +776,9 @@ function page() {
                                                     Invalid Compilation:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].invalid_compilation : null
+                                                    }
                                                     onChange={(e) => handleInvalidCompilation(e)}
                                                     id='invalid_compilation'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -638,6 +794,9 @@ function page() {
                                                     Norme:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].norme : null
+                                                    }
                                                     onChange={(e) => handleNorme(e)}
                                                     id='norme'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -653,6 +812,9 @@ function page() {
                                                     Cheat:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].cheat : null
+                                                    }
                                                     onChange={(e) => handleCheat(e)}
                                                     id='cheat'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -668,6 +830,9 @@ function page() {
                                                     Crash:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].crash : null
+                                                    }
                                                     onChange={(e) => handleCrash(e)}
                                                     id='crash'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -683,6 +848,9 @@ function page() {
                                                     Concerning Situations:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].concerning_situations : null
+                                                    }
                                                     onChange={(e) => handleConcerningSituations(e)}
                                                     id='concerning_situations'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -698,6 +866,9 @@ function page() {
                                                     Leaks:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].leaks : null
+                                                    }
                                                     onChange={(e) => handleLeaks(e)}
                                                     id='leaks'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -713,6 +884,9 @@ function page() {
                                                     Forbidden Functions:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].forbidden_functions : null
+                                                    }
                                                     onChange={(e) => handleForbiddenFunctions(e)}
                                                     id='forbidden_functions'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -728,6 +902,9 @@ function page() {
                                                     Cannot Support:
                                                 </label>
                                                 <select
+                                                    defaultValue={
+                                                        gradingOptionsDataFromServer ? gradingOptionsDataFromServer[0].cannot_support : null
+                                                    }
                                                     onChange={(e) => handleCannotSupport(e)}
                                                     id='cannot_support'
                                                     className='block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'
@@ -738,19 +915,15 @@ function page() {
                                                 </select>
                                             </div>
                                         </div>
-
                                     </div>
-
-
 
 
                                     < div className='mt-5'>
                                         <button type='submit' className='bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-10 rounded mt-10 transition duration-200'>
-                                            Save to Database
+                                            Update sheet
                                         </button>
                                         <div div className='mt-5'>
                                         </div>
-
                                     </div>
 
 

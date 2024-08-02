@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 import React from 'react'
+import Swal from 'sweetalert2'
 export const dynamic = 'force-dynamic'
 
 
@@ -21,10 +22,75 @@ function page() {
 
 
 
+
+
+
+
+
+
+    // ------------------------------------- Delete Sheet ------------------------------------------
+
+    const deleteSheet = (id) => {
+        fetch(`/api/sheet/${id}`, {
+            method: 'DELETE'
+        }).then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Deleted!',
+                        'The sheet has been deleted from the database.',
+                        'success'
+                    ).then(() => {
+                        setSheetData(sheetData.filter(sheet => sheet.id !== id))
+                    })
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        'Something went wrong',
+                        'error'
+                    )
+                }
+            })
+    }
+
+    const handleDeleteSheet = (id) => {
+
+        // Swal confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // Swal processing message
+                Swal.fire({
+                    title: 'Deleting the Sheet',
+                    html: 'Please wait...',
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                })
+
+                deleteSheet(id)
+            }
+        })
+    }
+
+
+
+
+
+
     return (
         <div className='bg-white text-gray-900 min-h-screen'>
             <div className="max-w-7xl mx-auto pb-20 pt-10">
-                <h1 className='text-3xl'>Admin</h1>
+                <h1 className='text-3xl text-center'>Admin Panel</h1>
 
                 <Link href='/admin/add'>
                     <button className='bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-4 rounded mt-10 transition duration-200'>
@@ -33,14 +99,16 @@ function page() {
                 </Link>
 
 
+                <h2 className='text-2xl mt-10'>All Sheets</h2>
+
                 {/* table with sheet data */}
 
                 <table className='w-full mt-10'>
                     <thead>
                         <tr className='bg-[#f0f0f0] text-gray-900'>
-                            <th className='py-3'>Project Title</th>
-                            <th className='py-3'>Number of Student</th>
-                            <th className='py-3'>Actions</th>
+                            <th className='py-3 font-normal'>Project Title</th>
+                            <th className='py-3 font-normal'>Number of Student</th>
+                            <th className='py-3 font-normal'>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,7 +122,9 @@ function page() {
                                             Edit
                                         </button>
                                     </Link>
-                                    <button className='bg-[#ff4d4d] hover:bg-[#ff3333] text-white py-2 px-5 rounded'>
+                                    <button
+                                        onClick={() => handleDeleteSheet(sheet.id)}
+                                        className='bg-[#b40f0f] hover:bg-[#b11f1f] text-white py-2 px-5 rounded'>
                                         Delete
                                     </button>
                                 </td>

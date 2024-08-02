@@ -34,7 +34,7 @@ model MandatorySection {
   title       String
   description String[]
   yes_no      Boolean
-  sheet       Sheet    @relation(fields: [sheetId], references: [id])
+  sheet       Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
   sheetId     String   @db.ObjectId
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
@@ -54,7 +54,7 @@ model GradingOption {
   leaks                 Boolean
   forbidden_functions   Boolean
   cannot_support        Boolean
-  sheet                 Sheet    @relation(fields: [sheetId], references: [id])
+  sheet                 Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
   sheetId               String   @db.ObjectId
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt

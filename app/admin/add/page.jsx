@@ -276,18 +276,31 @@ function page() {
             <div className="max-w-7xl mx-auto pb-20 px-5 md:px-14 lg:px-20 2xl:px-32">
 
                 {/* Back to admin */}
-                <Link href='/admin'>
-                    <button
-                        className='w-12 h-12 bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-4 rounded-full mt-10 transition duration-200'>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                <div className="flex gap-3 items-center">
+                    <Link href='/admin'>
+                        <button
+                            className='w-10 h-10 bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-3 rounded-full mt-10 transition duration-200'>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                            </svg>
+                        </button>
+                    </Link>
+                    <h1 className=' mt-10  text-gray-400'>Back to dashboard</h1>
+                </div>
+
+
+                <div className="flex mt-10 items-center gap-2">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
-                    </button>
-                </Link>
 
+                    </span>
+                    <h1 className='text-3xl '>
 
-
-                <h1 className='text-3xl mt-10'>+ Add a new sheet</h1>
+                        Add a new sheet
+                    </h1>
+                </div>
 
                 <div>
                     <form onSubmit={handleSubmit(submitForm)} className='mt-10'>
