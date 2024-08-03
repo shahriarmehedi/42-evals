@@ -106,17 +106,17 @@ function page() {
                 <table className='w-full mt-10'>
                     <thead>
                         <tr className='bg-[#f0f0f0] text-gray-900'>
-                            <th className='py-3 font-normal'>Project Title</th>
-                            <th className='py-3 font-normal'>Number of Student</th>
-                            <th className='py-3 font-normal'>Actions</th>
+                            <th className='py-3 text-left px-5 font-semibold'>Project Title</th>
+                            <th className='py-3 text-left px-5 font-semibold'>Number of Student</th>
+                            <th className='py-3 text-left px-5 font-semibold'>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {sheetData.map(sheet => (
                             <tr key={sheet.id} className='border-b border-gray-200'>
-                                <td className='py-3 text-center'>{sheet.project_title}</td>
-                                <td className='py-3 text-center'>{sheet.number_of_student}</td>
-                                <td className='py-3 flex justify-center text-sm'>
+                                <td className='py-3 px-5 '>{sheet.project_title}</td>
+                                <td className='py-3 px-5 '>{sheet.number_of_student}</td>
+                                <td className='py-3 px-5 text-sm'>
                                     <Link href={`/admin/edit/${sheet.id}`}>
                                         <button className='bg-[#0d94b6] hover:bg-[#0d829c] text-white py-2 px-5 rounded mr-2'>
                                             Edit

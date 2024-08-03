@@ -180,7 +180,7 @@ function page() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data.data)
+                console.log('STEP 1: SUCCESS', data.data)
 
                 const sheetId = data.data.id
 
@@ -192,7 +192,7 @@ function page() {
                 })
                     .then(res => res.json())
                     .then(data => {
-                        console.log(data.data)
+                        console.log('STEP 2: SUCCESS', data.data)
 
                         // Now create a grading options using the sheet id
 
@@ -202,7 +202,7 @@ function page() {
                         })
                             .then(res => res.json())
                             .then(data => {
-                                console.log(data.data)
+                                console.log('STEP 3: SUCCESS', data.data)
 
                                 if (data.success) {
                                     Swal.fire({
@@ -266,11 +266,11 @@ function page() {
             cannot_support: gradingOptionsData.cannot_support === 'true' ? true : false
         }
 
-        // createSheet(newData, newMandatoryOptionsData, newGradingOptionsData)
+        createSheet(newData, newMandatoryOptionsData, newGradingOptionsData)
 
-        console.log(newData)
-        console.log(newMandatoryOptionsData)
-        console.log(newGradingOptionsData)
+        // console.log(newData)
+        // console.log(newMandatoryOptionsData)
+        // console.log(newGradingOptionsData)
     }
 
 
