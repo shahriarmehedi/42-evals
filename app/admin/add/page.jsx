@@ -266,7 +266,11 @@ function page() {
             cannot_support: gradingOptionsData.cannot_support === 'true' ? true : false
         }
 
-        createSheet(newData, newMandatoryOptionsData, newGradingOptionsData)
+        // createSheet(newData, newMandatoryOptionsData, newGradingOptionsData)
+
+        console.log(newData)
+        console.log(newMandatoryOptionsData)
+        console.log(newGradingOptionsData)
     }
 
 
@@ -391,7 +395,7 @@ function page() {
                                                 Attachment 1 URL:
                                             </label>
                                             <input
-                                                {...register('attachment1Url', { required: true })}
+                                                {...register('attachment1Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_1'
@@ -408,7 +412,7 @@ function page() {
                                                 Attachment 2 Title:
                                             </label>
                                             <input
-                                                {...register('attachment2Title', { required: true })}
+                                                {...register('attachment2Title')}
                                                 placeholder='Enter attachment title'
                                                 type='text'
                                                 id='attachments_title_2'
@@ -421,7 +425,7 @@ function page() {
                                                 Attachment 2 URL:
                                             </label>
                                             <input
-                                                {...register('attachment2Url', { required: true })}
+                                                {...register('attachment2Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_2'
@@ -438,7 +442,7 @@ function page() {
                                                 Attachment 3 Title:
                                             </label>
                                             <input
-                                                {...register('attachment3Title', { required: true })}
+                                                {...register('attachment3Title')}
                                                 placeholder='Enter attachment title'
                                                 type='text'
                                                 id='attachments_title_3'
@@ -451,7 +455,7 @@ function page() {
                                                 Attachment 3 URL:
                                             </label>
                                             <input
-                                                {...register('attachment3Url', { required: true })}
+                                                {...register('attachment3Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_3'
@@ -468,7 +472,7 @@ function page() {
                                                 Attachment 4 Title:
                                             </label>
                                             <input
-                                                {...register('attachment4Title', { required: true })}
+                                                {...register('attachment4Title')}
                                                 placeholder='Enter attachment title'
                                                 type='text'
                                                 id='attachments_title_4'
@@ -481,7 +485,7 @@ function page() {
                                                 Attachment 4 URL:
                                             </label>
                                             <input
-                                                {...register('attachment4Url', { required: true })}
+                                                {...register('attachment4Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_4'
@@ -499,7 +503,7 @@ function page() {
                                         <textarea
                                             rows={5}
                                             placeholder='Enter optional bonus section text'
-                                            {...register('optional_bonus_sections', { required: true })}
+                                            {...register('optional_bonus_sections')}
                                             id='optional_bonus_sections'
                                             required
                                             className='mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'

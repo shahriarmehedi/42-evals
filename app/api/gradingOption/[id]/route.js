@@ -41,21 +41,22 @@ export const PUT = async (req, { params }) => {
     } = body;
     const gradingOptionData = await prisma.gradingOption.update({
         where: {
-            sheetId: id
+            id
         },
         data: {
-            ok,
-            outstanding,
-            empty_work,
-            incomplete_work,
-            invalid_compilation,
-            norme,
-            cheat,
-            crash,
-            concerning_situations,
-            leaks,
-            forbidden_functions,
-            cannot_support
+            ok: ok || false,
+            outstanding: outstanding || false,
+            empty_work: empty_work || false,
+            incomplete_work: incomplete_work || false,
+            invalid_compilation: invalid_compilation || false,
+            norme: norme || false,
+            cheat: cheat || false,
+            crash: crash || false,
+            concerning_situations: concerning_situations || false,
+            leaks: leaks || false,
+            forbidden_functions: forbidden_functions || false,
+            cannot_support: cannot_support || false
+
         }
     });
 

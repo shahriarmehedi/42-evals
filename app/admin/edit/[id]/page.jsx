@@ -60,9 +60,9 @@ function page({ params }) {
 
 
 
-    console.log(sheetDataFromServer);
-    console.log(mandatoryOptionsDataFromServer);
-    console.log(gradingOptionsDataFromServer);
+    // console.log(sheetDataFromServer);
+    // console.log(mandatoryOptionsDataFromServer);
+    // console.log(gradingOptionsDataFromServer);
 
 
 
@@ -209,6 +209,63 @@ function page({ params }) {
 
 
 
+    // Get all the mandatory options data from the server
+
+    const [allMandatoryOptionsDataFromServer, setAllMandatoryOptionsDataFromServer] = useState([])
+
+    useEffect(() => {
+        fetch(`/api/mandatorySection`)
+            .then(res => res.json())
+            .then(data => {
+                setAllMandatoryOptionsDataFromServer(data.data)
+            }
+            )
+    }, [])
+
+    // Find the mandatory options data from the server for the sheet id
+
+    const findMandatoryOptionsData = (id) => {
+        const mandatoryOptionsData = allMandatoryOptionsDataFromServer.filter(data => data.sheetId === id)
+        return mandatoryOptionsData
+    }
+
+    // get the mandatory options data id
+
+    const mandatoryOptionsDataId = findMandatoryOptionsData(sheetId)[0]?.id
+
+    // console.log('Mandatory options data id', mandatoryOptionsDataId)
+
+
+
+    // Get all the grading options data from the server
+
+    const [allGradingOptionsDataFromServer, setAllGradingOptionsDataFromServer] = useState([])
+
+    useEffect(() => {
+        fetch(`/api/gradingOption`)
+            .then(res => res.json())
+            .then(data => {
+                setAllGradingOptionsDataFromServer(data.data)
+            }
+            )
+    }, [])
+
+    // Find the grading options data from the server for the sheet id
+
+    const findGradingOptionsData = (id) => {
+        const gradingOptionsData = allGradingOptionsDataFromServer.filter(data => data.sheetId === id)
+        return gradingOptionsData
+    }
+
+
+    // get the grading options data id
+
+    const gradingOptionsDataId = findGradingOptionsData(sheetId)[0]?.id
+
+    // console.log('Grading options data id', gradingOptionsDataId)
+
+
+
 
 
     // -------------------- Submit form --------------------
@@ -234,27 +291,27 @@ function page({ params }) {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data.data)
+                console.log('Step 1: Updating sheet data SUCCESS', data.data)
 
                 // Now create a mandatory options using the sheet id
 
-                fetch(`/api/mandatorySection/${sheetId}`, {
+                fetch(`/api/mandatorySection/${mandatoryOptionsDataId}`, {
                     method: 'PUT',
                     body: JSON.stringify(newMandatoryOptionsData)
                 })
                     .then(res => res.json())
                     .then(data => {
-                        console.log(data.data)
+                        console.log('Step 2: Updating mandatory options SUCCESS', data.data)
 
                         // Now create a grading options using the sheet id
 
-                        fetch(`/api/gradingOption/${sheetId}`, {
+                        fetch(`/api/gradingOption/${gradingOptionsDataId}`, {
                             method: 'PUT',
                             body: JSON.stringify(newGradingOptionsData)
                         })
                             .then(res => res.json())
                             .then(data => {
-                                console.log(data.data)
+                                console.log('Step 3: Updating grading options SUCCESS', data.data)
 
                                 if (data.success) {
                                     Swal.fire({
@@ -272,8 +329,7 @@ function page({ params }) {
                                     })
                                 }
 
-                                // reset the form after successful submission
-                                reset()
+                                window.location.reload()
 
                             })
                     })
@@ -283,46 +339,58 @@ function page({ params }) {
     }
 
 
+    // console.log('Sheet data from server - INTRODUCTION', sheetDataFromServer.introduction)
+    // console.log('Sheet data from server - GUIDELINES', sheetDataFromServer.guidelines)
+    // console.log('INTRDUCTION DATA', introductionData)
+
+
 
     const submitForm = (data) => {
 
         const newData = {
-            optional_bonus_sections: data.optional_bonus_sections,
-            project_title: data.project_title,
-            introduction: introductionData,
+            optional_bonus_sections: data.optional_bonus_sections || sheetDataFromServer.optional_bonus_sections,
+            project_title: data.project_title || sheetDataFromServer.project_title,
+            introduction: introductionData.length === 0 ? sheetDataFromServer.introduction : introductionData,
             attachments: [
-                `${data.attachment1Title},${data.attachment1Url}`, `${data.attachment2Title},${data.attachment2Url}`, `${data.attachment3Title},${data.attachment3Url}`, `${data.attachment4Title},${data.attachment4Url}`
+                `${data.attachment1Title},${data.attachment1Url}`,
+                `${data.attachment2Title},${data.attachment2Url}`,
+                `${data.attachment3Title},${data.attachment3Url}`,
+                `${data.attachment4Title},${data.attachment4Url}`
             ],
-            guidelines: guidelinesData,
+            guidelines: guidelinesData.length === 0 ? sheetDataFromServer.guidelines : guidelinesData,
             number_of_student: parseInt(data.number_of_student),
         }
 
         const newMandatoryOptionsData = {
             title: mandatoryOptionsData.title || mandatoryOptionsDataFromServer[0].title,
-            description: mandatoryOptionsData.description || mandatoryOptionsDataFromServer[0].description,
+            description: mandatoryOptionsData.description ? mandatoryOptionsData.description : mandatoryOptionsDataFromServer[0].description,
             yes_no: mandatoryOptionsData.yes_no === 'true' ? true : false
         }
 
         const newGradingOptionsData = {
-            ok: gradingOptionsData.ok === 'true' ? true : false,
-            outstanding: gradingOptionsData.outstanding === 'true' ? true : false,
-            empty_work: gradingOptionsData.empty_work === 'true' ? true : false,
-            incomplete_work: gradingOptionsData.incomplete_work === 'true' ? true : false,
-            invalid_compilation: gradingOptionsData.invalid_compilation === 'true' ? true : false,
-            norme: gradingOptionsData.norme === 'true' ? true : false,
-            cheat: gradingOptionsData.cheat === 'true' ? true : false,
-            crash: gradingOptionsData.crash === 'true' ? true : false,
-            concerning_situations: gradingOptionsData.concerning_situations === 'true' ? true : false,
-            leaks: gradingOptionsData.leaks === 'true' ? true : false,
-            forbidden_functions: gradingOptionsData.forbidden_functions === 'true' ? true : false,
-            cannot_support: gradingOptionsData.cannot_support === 'true' ? true : false
+            ok: gradingOptionsData.ok === 'true' ? true : false || gradingOptionsDataFromServer[0].ok,
+            outstanding: gradingOptionsData.outstanding === 'true' ? true : false || gradingOptionsDataFromServer[0].outstanding,
+            empty_work: gradingOptionsData.empty_work === 'true' ? true : false || gradingOptionsDataFromServer[0].empty_work,
+            incomplete_work: gradingOptionsData.incomplete_work === 'true' ? true : false || gradingOptionsDataFromServer[0].incomplete_work,
+            invalid_compilation: gradingOptionsData.invalid_compilation === 'true' ? true : false || gradingOptionsDataFromServer[0].invalid_compilation,
+            norme: gradingOptionsData.norme === 'true' ? true : false || gradingOptionsDataFromServer[0].norme,
+            cheat: gradingOptionsData.cheat === 'true' ? true : false || gradingOptionsDataFromServer[0].cheat,
+            crash: gradingOptionsData.crash === 'true' ? true : false || gradingOptionsDataFromServer[0].crash,
+            concerning_situations: gradingOptionsData.concerning_situations === 'true' ? true : false || gradingOptionsDataFromServer[0].concerning_situations,
+            leaks: gradingOptionsData.leaks === 'true' ? true : false || gradingOptionsDataFromServer[0].leaks,
+            forbidden_functions: gradingOptionsData.forbidden_functions === 'true' ? true : false || gradingOptionsDataFromServer[0].forbidden_functions,
+            cannot_support: gradingOptionsData.cannot_support === 'true' ? true : false || gradingOptionsDataFromServer[0].cannot_support
         }
 
 
-        console.log('SHEET DATA', newData)
-        console.log('MANDATORY OPTIONS DATA', newMandatoryOptionsData)
-        console.log('GRADING OPTIONS DATA', newGradingOptionsData)
+        // console.log('New data', newData)
+        // console.log('New mandatory options data', newMandatoryOptionsData)
+        // console.log('New grading options data', newGradingOptionsData)
+
+
         updateSheet(newData, newMandatoryOptionsData, newGradingOptionsData)
+
+
     }
 
 
@@ -476,7 +544,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[0].split(',')[0] : ''
                                                 }
-                                                {...register('attachment1Title', { required: true })}
+                                                {...register('attachment1Title')}
                                                 placeholder='Enter attachment title'
                                                 type='text'
                                                 id='attachments_title_1'
@@ -492,7 +560,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[0].split(',')[1] : ''
                                                 }
-                                                {...register('attachment1Url', { required: true })}
+                                                {...register('attachment1Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_1'
@@ -512,7 +580,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[1].split(',')[0] : ''
                                                 }
-                                                {...register('attachment2Title', { required: true })}
+                                                {...register('attachment2Title')}
                                                 placeholder='Enter attachment title'
                                                 type='text'
                                                 id='attachments_title_2'
@@ -528,7 +596,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[1].split(',')[1] : ''
                                                 }
-                                                {...register('attachment2Url', { required: true })}
+                                                {...register('attachment2Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_2'
@@ -548,7 +616,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[2].split(',')[0] : ''
                                                 }
-                                                {...register('attachment3Title', { required: true })}
+                                                {...register('attachment3Title')}
                                                 placeholder='Enter attachment title'
                                                 type='text'
                                                 id='attachments_title_3'
@@ -564,7 +632,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[2].split(',')[1] : ''
                                                 }
-                                                {...register('attachment3Url', { required: true })}
+                                                {...register('attachment3Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_3'
@@ -584,7 +652,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[3].split(',')[0] : ''
                                                 }
-                                                {...register('attachment4Title', { required: true })}
+                                                {...register('attachment4Title')}
                                                 placeholder='Enter attachment title'
                                                 type='text'
                                                 id='attachments_title_4'
@@ -600,7 +668,7 @@ function page({ params }) {
                                                 defaultValue={
                                                     sheetDataFromServer?.attachments ? sheetDataFromServer.attachments[3].split(',')[1] : ''
                                                 }
-                                                {...register('attachment4Url', { required: true })}
+                                                {...register('attachment4Url')}
                                                 placeholder='Enter attachment URL'
                                                 type='text'
                                                 id='attachments_url_4'
@@ -619,7 +687,7 @@ function page({ params }) {
                                             defaultValue={sheetDataFromServer?.optional_bonus_sections}
                                             rows={5}
                                             placeholder='Enter optional bonus section text'
-                                            {...register('optional_bonus_sections', { required: true })}
+                                            {...register('optional_bonus_sections')}
                                             id='optional_bonus_sections'
                                             required
                                             className='mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm'

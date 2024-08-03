@@ -30,7 +30,7 @@ export const PUT = async (req, { params }) => {
     const { title, description, yes_no } = body;
     const mandatorySectionData = await prisma.mandatorySection.update({
         where: {
-            sheetId: id
+            id
         },
         data: {
             title: title,

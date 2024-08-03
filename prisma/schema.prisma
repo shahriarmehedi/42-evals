@@ -22,7 +22,7 @@ model Sheet {
   introduction            String[]
   guidelines              String[]
   attachments             String[]
-  optional_bonus_sections String
+  optional_bonus_sections String?
   mandatory_sections      MandatorySection[]
   grading_options         GradingOption[]
   created_at              DateTime           @default(now())
