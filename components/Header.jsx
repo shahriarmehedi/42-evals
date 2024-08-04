@@ -52,6 +52,11 @@ function Header() {
                                 Privacy Policy
                             </button>
                         </MenuItem>
+                        <MenuItem>
+                            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+                                Request Edit
+                            </button>
+                        </MenuItem>
                     </MenuItems>
                 </Menu>
             </div>

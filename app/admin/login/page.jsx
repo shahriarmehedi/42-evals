@@ -2,7 +2,11 @@
 
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation'
+import Swal from 'sweetalert2';
 function page() {
+
+    const router = useRouter()
 
     const {
         register,
@@ -28,16 +32,34 @@ function page() {
 
 
     const submitForm = (data) => {
-        alert(JSON.stringify(data))
+        console.log(data)
+
+        // check user credentials
+        if (data.username === 'admin' && data.password === 'admin') {
+
+            if (checked) {
+                localStorage.setItem('admin', 'true') // remember me
+                sessionStorage.setItem('admin', 'true')
+            } else {
+                sessionStorage.setItem('admin', 'true')
+            }
+
+            // go to admin panel
+            router.push('/admin')
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'You are logged in as admin'
+            })
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Invalid credentials'
+            })
+        }
 
 
-
-        // if(checked){
-        //     localStorage.setItem('remember_me', {
-        //         email: data.email,
-        //         authenticated: true
-        //     }) 
-        // }
 
     }
 
@@ -52,16 +74,16 @@ function page() {
                     <h1 className='text-3xl'>Admin Login</h1>
                     <form onSubmit={handleSubmit(submitForm)}>
                         <div className='mt-10'>
-                            <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
+                            <label htmlFor='username' className='block text-sm font-medium text-gray-700'>
                                 Username
                             </label>
                             <input
-                                type='email'
-                                id='email'
-                                {...register('email', { required: true })}
+                                type='username'
+                                id='username'
+                                {...register('username', { required: true })}
                                 className='mt-1 block w-full px-3 py-3 border border-gray-300 shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-md outline-none'
                             />
-                            {errors.email && <span className='text-red-500'>This field is required</span>}
+                            {errors.username && <span className='text-red-500'>This field is required</span>}
                         </div>
                         <div className='mt-5'>
                             <label htmlFor='password' className='block text-sm font-medium text-gray-700'>

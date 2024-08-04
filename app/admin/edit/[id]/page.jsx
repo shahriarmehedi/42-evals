@@ -7,6 +7,20 @@ import Swal from 'sweetalert2';
 
 function page({ params }) {
 
+    // check login status
+
+    useEffect(() => {
+        if (sessionStorage.getItem('admin') !== 'true' && localStorage.getItem('admin') !== 'true') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Unauthorized',
+                text: 'You need to login first'
+            }).then(() => {
+                window.location.href = '/admin/login'
+            })
+        }
+    }, [])
+
 
     // Get the sheet id from the url
 
