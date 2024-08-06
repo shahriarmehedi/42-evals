@@ -28,12 +28,14 @@ function page() {
 
 
     const [sheetData, setSheetData] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         fetch('/api/sheet')
             .then(res => res.json())
             .then(data => {
                 setSheetData(data.data)
+                setLoading(false)
             })
     }, [])
 
@@ -104,10 +106,9 @@ function page() {
 
                 <Link href='/admin/add'>
                     <button className='bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-4 rounded mt-10 transition duration-200'>
-                        + Add New Sheet
+                        + Add New Evaluation Sheet
                     </button>
                 </Link>
-
 
                 <h2 className='text-2xl mt-10'>All Sheets</h2>
 
@@ -121,26 +122,34 @@ function page() {
                             <th className='py-3 text-left px-5 font-semibold'>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {sheetData.map(sheet => (
-                            <tr key={sheet.id} className='border-b border-gray-200'>
-                                <td className='py-3 px-5 '>{sheet.project_title}</td>
-                                <td className='py-3 px-5 '>{sheet.number_of_student}</td>
-                                <td className='py-3 px-5 text-sm'>
-                                    <Link href={`/admin/edit/${sheet.id}`}>
-                                        <button className='bg-[#0d94b6] hover:bg-[#0d829c] text-white py-2 px-5 rounded mr-2'>
-                                            Edit
-                                        </button>
-                                    </Link>
-                                    <button
-                                        onClick={() => handleDeleteSheet(sheet.id)}
-                                        className='bg-[#b40f0f] hover:bg-[#b11f1f] text-white py-2 px-5 rounded'>
-                                        Delete
-                                    </button>
-                                </td>
+
+                    {
+                        loading ? <tbody>
+                            <tr>
+                                <td colSpan='3' className='text-center py-5'>Loading...</td>
                             </tr>
-                        ))}
-                    </tbody>
+                        </tbody> :
+                            <tbody>
+                                {sheetData.map(sheet => (
+                                    <tr key={sheet.id} className='border-b border-gray-200'>
+                                        <td className='py-3 px-5 '>{sheet.project_title}</td>
+                                        <td className='py-3 px-5 '>{sheet.number_of_student}</td>
+                                        <td className='py-3 px-5 text-sm'>
+                                            <Link href={`/admin/edit/${sheet.id}`}>
+                                                <button className='bg-[#0d94b6] hover:bg-[#0d829c] text-white py-2 px-5 rounded mr-2'>
+                                                    Edit
+                                                </button>
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDeleteSheet(sheet.id)}
+                                                className='bg-[#b40f0f] hover:bg-[#b11f1f] text-white py-2 px-5 rounded'>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                    }
                 </table>
             </div>
         </div>
