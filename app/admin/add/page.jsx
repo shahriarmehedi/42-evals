@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link';
-import React, { useEffect, useState, useRef, useMemo } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
-import JoditEditor from 'jodit-react';
+// import JoditEditor from 'jodit-react';
 
 
 
@@ -37,16 +37,20 @@ function page() {
 
     // JODIT TEXT EDITOR FOR MANDATORY SECTION PART
 
-    const editor = useRef(null);
-    const [mandatorySectionRichText, setMandatorySectionRichText] = useState('')
+    // const editor = useRef(null);
+    // const [mandatorySectionRichText, setMandatorySectionRichText] = useState('')
 
-    const config = useMemo(() => ({
-        readonly: false
-    }), [])
+    // const config = useMemo(() => ({
+    //     readonly: false
+    // }), [])
 
-    const handleMandatorySectionRichText = (content) => {
-        setMandatorySectionRichText(content)
-    }
+    // const config = {
+    //     readonly: false
+    // }
+
+    // const handleMandatorySectionRichText = (content) => {
+    //     setMandatorySectionRichText(content)
+    // }
 
 
 
@@ -603,7 +607,7 @@ function page() {
 
                                 {/* ZODIT RICH TEXT (HTML) EDITOR */}
 
-                                <div>
+                                {/* <div>
                                     <label htmlFor='mandatory_section_rich_text' className='block text-sm text-gray-500 mt-5 mb-1'>
                                         Detailed dscription (Rich Text):
                                     </label>
@@ -616,7 +620,7 @@ function page() {
                                         onBlur={newContent => handleMandatorySectionRichText(newContent)}
                                         onChange={newContent => handleMandatorySectionRichText(newContent)}
                                     />
-                                </div>
+                                </div> */}
 
 
                                 {/* yes_no */}
@@ -842,18 +846,10 @@ function page() {
 
                             </div>
 
-
-
-
                         </div>
                     </form>
 
                 </div>
-
-
-
-
-
 
             </div>
         </div>
