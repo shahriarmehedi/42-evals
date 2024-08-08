@@ -40,29 +40,40 @@ function Header() {
                             </Link>
                         </MenuItem>
                         <MenuItem>
-                            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
-                                Give this repo a star
-                            </button>
+                            <a
+                                target='_blank'
+                                href="https://github.com/rphlr/42-Evals" >
+                                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+                                    Give this repo a star
+                                </button>
+                            </a>
                         </MenuItem>
                         <MenuItem>
-                            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
-                                Follow me on GitHub
-                            </button>
+
+                            <a
+                                target='_blank'
+                                href="https://github.com/rphlr" >
+                                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+                                    Follow me on GitHub
+                                </button>
+                            </a>
                         </MenuItem>
                         <MenuItem>
-                            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
-                                Add me on LinkedIn
-                            </button>
+
+                            <a
+                                target='_blank'
+                                href="https://www.linkedin.com/in/rphlr" >
+                                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+                                    Add me on LinkedIn
+                                </button>
+                            </a>
                         </MenuItem>
                         <MenuItem>
-                            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
-                                Privacy Policy
-                            </button>
-                        </MenuItem>
-                        <MenuItem>
-                            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
-                                Request Edit
-                            </button>
+                            <Link href='/privacy'>
+                                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+                                    Privacy Policy
+                                </button>
+                            </Link>
                         </MenuItem>
                     </MenuItems>
                 </Menu>
