@@ -83,7 +83,7 @@ export const POST = async (req, { params }) => {
 
 // DELETE /api/mandatorySection/[id] and delete mandatory section by sheet id
 
-export const DELETE = async ({ params }) => {
+export const DELETE = async (req, { params }) => {
     try {
         const { id } = params;
         const mandatorySectionData = await prisma.mandatorySection.delete({

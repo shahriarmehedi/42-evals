@@ -27,7 +27,24 @@ function page({ params }) {
 
     return (
         <div className='bg-gray-100 text-gray-900 min-h-screen'>
-            <div className="max-w-7xl mx-auto pb-20 pt-10">
+
+            {/* Back to all sheets */}
+            <div className="flex gap-3 items-center max-w-7xl mx-auto pt-10 px-5 2xl:px-0">
+                <Link href='/sheets'>
+                    <button
+                        className='w-10 h-10 bg-[#0d94b6] hover:bg-[#0d829c] text-white py-3 px-3 rounded-full mt-10 transition duration-200'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                        </svg>
+                    </button>
+                </Link>
+                <h1 className=' mt-10  text-gray-400'>Back to all evaluation sheets</h1>
+            </div>
+
+
+
+
+            <div className="max-w-7xl mx-auto pb-20 pt-10 px-5 2xl:px-0">
                 <h1 className='text-3xl font-bold text-center'>
                     {sheetData.project_title}
                 </h1>
@@ -53,7 +70,15 @@ function page({ params }) {
                     <p className='pt-5'>
                         {
                             sheetData.introduction ? sheetData.introduction.map((intro, index) => (
-                                <p className='pb-5' key={index}> -{intro}</p>
+                                <p className='pb-5 flex items-center gap-2' key={index}>
+                                    <span className='text-[#0D94B6]'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+
+                                    </span>
+                                    {intro}
+                                </p>
                             )) : ''
                         }
                     </p>
@@ -71,7 +96,15 @@ function page({ params }) {
                     <p className='pt-5'>
                         {
                             sheetData.guidelines ? sheetData.guidelines.map((guideline, index) => (
-                                <p className='pb-5' key={index}> -{guideline}</p>
+                                <p className='pb-5  flex items-center gap-2' key={index}>
+                                    <span className='text-[#0D94B6]'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+
+                                    </span>
+                                    {guideline}
+                                </p>
                             )) : ''
                         }
                     </p>
